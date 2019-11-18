@@ -12,19 +12,24 @@ import com.siva.spring.transcation.service.OrganizationService;
 @Service
 public class OrganzationServiceImpl implements OrganizationService {
 
-	@Autowired
+@Autowired
 	EmployeeService employeeService;
 
 	@Autowired
 	HealthInsuranceService healthInsuranceService;
 
 	@Override
+	@Transactional
 	public void joinOrganization(Employee employee, EmployeeHealthInsurance employeeHealthInsurance) {
 		employeeService.insertEmployee(employee);
+		if (employee.getEmpld().equals("emp1")) {
+			throw new RuntimeException("thowing exception to test transaction rollback");
+		}
 		healthInsuranceService.registerEmployeeHealthInsurance(employeeHealthInsurance);
 	}
 
 	@Override
+	@Transactional
 	public void leaveOrganization(Employee employee, EmployeeHealthInsurance employeeHealthInsurance) {
 		employeeService.deleteEmployeeById(employee.getEmpld());
 		healthInsuranceService.deleteEmployeeHealthInsuranceById(employeeHealthInsurance.getEmpId());
